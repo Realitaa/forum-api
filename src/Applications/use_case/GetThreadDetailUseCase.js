@@ -17,11 +17,19 @@ class GetThreadDetailUseCase {
     const comments = await this._commentRepository.getCommentsByThreadId(threadId);
 
     const threadComments = comments.map(
-      (comment) => new ThreadComment(comment),
+      (comment) => new ThreadComment({
+        ...comment,
+        date: comment.date instanceof Date
+          ? comment.date.toISOString()
+          : comment.date,
+      }),
     );
 
     return new DetailThread({
       ...thread,
+      date: thread.date instanceof Date
+        ? thread.date.toISOString()
+        : thread.date,
       comments: threadComments,
     });
   }
