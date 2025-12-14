@@ -1,10 +1,12 @@
 const pool = require('../../database/postgres/pool');
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
 const ThreadRepositoryPostgres = require('../ThreadRepositoryPostgres');
+const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 
 describe('ThreadRepositoryPostgres', () => {
   afterEach(async () => {
     await ThreadsTableTestHelper.cleanTable();
+    await UsersTableTestHelper.cleanTable();
   });
 
   afterAll(async () => {
@@ -14,6 +16,13 @@ describe('ThreadRepositoryPostgres', () => {
   describe('addThread function', () => {
     it('should persist thread and return added thread correctly', async () => {
       // Arrange
+      await UsersTableTestHelper.addUser({
+        id: 'user-123',
+        username: 'dicoding',
+        password: 'secret',
+        fullname: 'Dicoding Indonesia',
+      });
+
       const thread = {
         id: 'thread-123',
         title: 'sebuah thread',
