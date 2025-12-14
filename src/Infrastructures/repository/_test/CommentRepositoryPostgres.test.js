@@ -59,4 +59,43 @@ describe('CommentRepositoryPostgres', () => {
       expect(commentInDatabase.is_delete).toEqual(false);
     });
   });
+
+  describe('deleteComment function', () => {
+    it('should set the comment property is_delete to true', async () => {
+    // Arrange
+      await UsersTableTestHelper.addUser({
+        id: 'user-123',
+        username: 'dicoding',
+        password: 'secret',
+        fullname: 'Dicoding Indonesia',
+      });
+
+      await ThreadsTableTestHelper.addThread({
+        id: 'thread-123',
+        title: 'sebuah thread',
+        body: 'sebuah body thread',
+        owner: 'user-123',
+      });
+
+      await CommentsTableTestHelper.addComment({
+        content: 'sebuah comment',
+        owner: 'user-123',
+        threadId: 'thread-123',
+      });
+
+      const commentId = 'comment-123';
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      // Action
+      await commentRepositoryPostgres.deleteComment(commentId);
+
+      // Assert & Expect
+      const commentInDatabase = await CommentsTableTestHelper.findCommentById(commentId);
+      expect(commentInDatabase).toBeDefined();
+      expect(commentInDatabase.content).toEqual('sebuah comment');
+      expect(commentInDatabase.owner).toEqual('user-123');
+      expect(commentInDatabase.thread_id).toEqual('thread-123');
+      expect(commentInDatabase.is_delete).toEqual(true);
+    });
+  });
 });

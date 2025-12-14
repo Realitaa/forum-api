@@ -1,5 +1,4 @@
 const DeleteCommentUseCase = require('../DeleteCommentUseCase');
-const CommentRepository = require('../../../Domains/comments/CommentRepository');
 const InvariantError = require('../../../Commons/exceptions/InvariantError');
 
 describe('DeleteCommentUseCase', () => {
