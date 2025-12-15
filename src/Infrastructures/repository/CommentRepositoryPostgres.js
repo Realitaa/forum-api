@@ -27,25 +27,35 @@ class CommentRepositoryPostgres extends CommentRepository {
   }
 
   async verifyCommentOwner(commentId, owner) {
-    // cek komentar ada atau tidak
-    const checkCommentQuery = {
+    const query = {
       text: `
       SELECT owner FROM comments
+      WHERE id = $1
+    `,
+      values: [commentId],
+    };
+
+    const result = await this._pool.query(query);
+
+    const commentOwner = result.rows[0].owner;
+    if (commentOwner !== owner) {
+      throw new AuthorizationError('anda tidak berhak mengakses resource ini');
+    }
+  }
+
+  async verifyCommentExists(commentId) {
+    const query = {
+      text: `
+      SELECT id FROM comments
       WHERE id = $1 AND is_delete = false
     `,
       values: [commentId],
     };
 
-    const commentResult = await this._pool.query(checkCommentQuery);
+    const result = await this._pool.query(query);
 
-    if (!commentResult.rowCount) {
+    if (!result.rowCount) {
       throw new NotFoundError('komentar tidak ditemukan');
-    }
-
-    // cek kepemilikan
-    const commentOwner = commentResult.rows[0].owner;
-    if (commentOwner !== owner) {
-      throw new AuthorizationError('anda tidak berhak mengakses resource ini');
     }
   }
 
