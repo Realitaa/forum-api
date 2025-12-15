@@ -1,4 +1,4 @@
-const InvariantError = require('../../Commons/exceptions/InvariantError');
+const GetThreadDetail = require('../../Domains/threads/entities/GetThreadDetail');
 const ThreadComment = require('../../Domains/comments/entities/ThreadComment');
 const DetailThread = require('../../Domains/threads/entities/DetailThread');
 
@@ -9,45 +9,18 @@ class GetThreadDetailUseCase {
   }
 
   async execute(useCasePayload) {
-    this._validatePayload(useCasePayload);
-
-    const { threadId } = useCasePayload;
-
-    const thread = await this._threadRepository.getThreadById(threadId);
-    const comments = await this._commentRepository.getCommentsByThreadId(threadId);
+    const getThreadDetail = new GetThreadDetail(useCasePayload);
+    const thread = await this._threadRepository.getThreadById(getThreadDetail.threadId);
+    const comments = await this._commentRepository.getCommentsByThreadId(getThreadDetail.threadId);
 
     const threadComments = comments.map(
-      (comment) => new ThreadComment({
-        ...comment,
-        date: comment.date instanceof Date
-          ? comment.date.toISOString()
-          : comment.date,
-      }),
+      (comment) => new ThreadComment(comment),
     );
 
     return new DetailThread({
       ...thread,
-      date: thread.date instanceof Date
-        ? thread.date.toISOString()
-        : thread.date,
       comments: threadComments,
     });
-  }
-
-  _validatePayload(payload) {
-    const { threadId } = payload;
-
-    if (!threadId) {
-      throw new InvariantError(
-        'GET_THREAD_DETAIL_USE_CASE.NOT_CONTAIN_NEEDED_PROPERTY',
-      );
-    }
-
-    if (typeof threadId !== 'string') {
-      throw new InvariantError(
-        'GET_THREAD_DETAIL_USE_CASE.NOT_MEET_DATA_TYPE_SPECIFICATION',
-      );
-    }
   }
 }
 
