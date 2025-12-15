@@ -27,7 +27,7 @@ class CommentRepositoryPostgres extends CommentRepository {
   }
 
   async verifyCommentOwner(commentId, owner) {
-  // cek komentar ada atau tidak
+    // cek komentar ada atau tidak
     const checkCommentQuery = {
       text: `
       SELECT owner FROM comments
