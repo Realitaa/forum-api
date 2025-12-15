@@ -36,14 +36,12 @@ describe('AddCommentUseCase', () => {
       threadId: 'thread-123',
     };
 
-    const expectedAddedComment = {
-      content: 'sebuah comment',
-      owner: 'user-123',
-    };
-
-    // mock
     const mockCommentRepository = {
-      addComment: jest.fn(() => expectedAddedComment),
+      addComment: jest.fn(() => ({
+        id: 'comment-123',
+        content: 'sebuah comment',
+        owner: 'user-123',
+      })),
     };
 
     const mockThreadRepository = {
@@ -60,13 +58,20 @@ describe('AddCommentUseCase', () => {
     const addedComment = await addCommentUseCase.execute(useCasePayload);
 
     // Assert
-    expect(addedComment).toStrictEqual(expectedAddedComment);
-    expect(mockCommentRepository.addComment).toHaveBeenCalled();
-    expect(mockThreadRepository.verifyThreadExists).toHaveBeenCalledWith(useCasePayload.threadId);
-    expect(mockCommentRepository.addComment).toHaveBeenCalledWith({
-      content: useCasePayload.content,
-      owner: useCasePayload.owner,
-      threadId: useCasePayload.threadId,
+    expect(mockThreadRepository.verifyThreadExists)
+      .toHaveBeenCalledWith(useCasePayload.threadId);
+
+    expect(mockCommentRepository.addComment)
+      .toHaveBeenCalledWith({
+        content: useCasePayload.content,
+        owner: useCasePayload.owner,
+        threadId: useCasePayload.threadId,
+      });
+
+    expect(addedComment).toStrictEqual({
+      id: 'comment-123',
+      content: 'sebuah comment',
+      owner: 'user-123',
     });
   });
 });
