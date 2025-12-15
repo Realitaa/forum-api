@@ -1,4 +1,5 @@
-const InvariantError = require('../../Commons/exceptions/InvariantError');
+const AddThread = require('../../Domains/threads/entities/AddThread');
+const AddedThread = require('../../Domains/threads/entities/AddedThread');
 
 class AddThreadUseCase {
   constructor({ threadRepository }) {
@@ -6,27 +7,15 @@ class AddThreadUseCase {
   }
 
   async execute(useCasePayload) {
-    this._validatePayload(useCasePayload);
+    const addThread = new AddThread(useCasePayload);
 
-    const { title, body, owner } = useCasePayload;
-
-    return this._threadRepository.addThread({
-      title,
-      body,
-      owner,
+    const addedThread = await this._threadRepository.addThread({
+      title: addThread.title,
+      body: addThread.body,
+      owner: addThread.owner,
     });
-  }
 
-  _validatePayload(payload) {
-    const { title, body } = payload;
-
-    if (!title || !body) {
-      throw new InvariantError('ADD_THREAD_USE_CASE.NOT_CONTAIN_NEEDED_PROPERTY');
-    }
-
-    if (typeof title !== 'string' || typeof body !== 'string') {
-      throw new InvariantError('ADD_THREAD_USE_CASE.NOT_MEET_DATA_TYPE_SPECIFICATION');
-    }
+    return new AddedThread(addedThread);
   }
 }
 

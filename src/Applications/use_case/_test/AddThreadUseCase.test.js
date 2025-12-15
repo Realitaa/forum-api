@@ -1,36 +1,8 @@
 const AddThreadUseCase = require('../AddThreadUseCase');
-const InvariantError = require('../../../Commons/exceptions/InvariantError');
+const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
+const AddedThread = require('../../../Domains/threads/entities/AddedThread');
 
 describe('AddThreadUseCase', () => {
-  it('should throw InvariantError when payload does not contain needed property', async () => {
-    // Arrange
-    const useCasePayload = {
-      title: 'sebuah thread', // body tidak ada
-    };
-
-    const addThreadUseCase = new AddThreadUseCase({});
-
-    // Action & Assert
-    await expect(addThreadUseCase.execute(useCasePayload))
-      .rejects
-      .toThrow(InvariantError);
-  });
-
-  it('should throw InvariantError when payload has wrong data type', async () => {
-    // Arrange
-    const useCasePayload = {
-      title: 'sebuah thread',
-      body: ['sebuah body thread'], // body bukan string
-    };
-
-    const addThreadUseCase = new AddThreadUseCase({});
-
-    // Action & Assert
-    await expect(addThreadUseCase.execute(useCasePayload))
-      .rejects
-      .toThrow(InvariantError);
-  });
-
   it('should orchestrate add thread action correctly', async () => {
     // Arrange
     const useCasePayload = {
@@ -40,13 +12,12 @@ describe('AddThreadUseCase', () => {
     };
 
     // mock
-    const mockThreadRepository = {
-      addThread: jest.fn(() => ({
-        id: 'thread-123',
-        title: 'sebuah thread',
-        owner: 'user-123',
-      })),
-    };
+    const mockThreadRepository = new ThreadRepository();
+    mockThreadRepository.addThread = jest.fn(() => ({
+      id: 'thread-123',
+      title: 'sebuah thread',
+      owner: 'user-123',
+    }));
 
     // instance AddThreadUseCase dengan mock repository
     const addThreadUseCase = new AddThreadUseCase({
@@ -63,10 +34,9 @@ describe('AddThreadUseCase', () => {
       owner: useCasePayload.owner,
     });
 
-    expect(addedThread).toStrictEqual({
-      id: 'thread-123',
-      title: 'sebuah thread',
-      owner: 'user-123',
-    });
+    expect(addedThread).toBeInstanceOf(AddedThread);
+    expect(addedThread.id).toEqual('thread-123');
+    expect(addedThread.title).toEqual('sebuah thread');
+    expect(addedThread.owner).toEqual('user-123');
   });
 });
