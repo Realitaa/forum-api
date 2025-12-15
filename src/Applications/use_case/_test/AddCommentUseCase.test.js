@@ -1,4 +1,6 @@
 const AddCommentUseCase = require('../AddCommentUseCase');
+const CommentRepository = require('../../../Domains/comments/CommentRepository');
+const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 const InvariantError = require('../../../Commons/exceptions/InvariantError');
 
 describe('AddCommentUseCase', () => {
@@ -36,17 +38,15 @@ describe('AddCommentUseCase', () => {
       threadId: 'thread-123',
     };
 
-    const mockCommentRepository = {
-      addComment: jest.fn(() => ({
-        id: 'comment-123',
-        content: 'sebuah comment',
-        owner: 'user-123',
-      })),
-    };
+    const mockCommentRepository = new CommentRepository();
+    mockCommentRepository.addComment = jest.fn(() => ({
+      id: 'comment-123',
+      content: 'sebuah comment',
+      owner: 'user-123',
+    }));
 
-    const mockThreadRepository = {
-      verifyThreadExists: jest.fn(() => Promise.resolve()),
-    };
+    const mockThreadRepository = new ThreadRepository();
+    mockThreadRepository.verifyThreadExists = jest.fn(() => Promise.resolve());
 
     // instance addCommentUseCase dengan mock repository
     const addCommentUseCase = new AddCommentUseCase({
