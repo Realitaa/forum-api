@@ -1,35 +1,9 @@
 const AddCommentUseCase = require('../AddCommentUseCase');
 const CommentRepository = require('../../../Domains/comments/CommentRepository');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
-const InvariantError = require('../../../Commons/exceptions/InvariantError');
+const AddedComment = require('../../../Domains/comments/entities/AddedComment');
 
 describe('AddCommentUseCase', () => {
-  it('should throw InvariantError when payload does not contain needed property', async () => {
-    // Arrange
-    const useCasePayload = {}; // content tidak ada
-
-    const addCommentUseCase = new AddCommentUseCase({});
-
-    // Action & Assert
-    await expect(addCommentUseCase.execute(useCasePayload))
-      .rejects
-      .toThrow(InvariantError);
-  });
-
-  it('should throw InvariantError when payload has wrong data type', async () => {
-    // Arrange
-    const useCasePayload = {
-      content: ['sebuah comment'], // content bukan string
-    };
-
-    const addCommentUseCase = new AddCommentUseCase({});
-
-    // Action & Assert
-    await expect(addCommentUseCase.execute(useCasePayload))
-      .rejects
-      .toThrow(InvariantError);
-  });
-
   it('should orchestrate add comment action correctly', async () => {
     // Arrange
     const useCasePayload = {
@@ -68,10 +42,9 @@ describe('AddCommentUseCase', () => {
         threadId: useCasePayload.threadId,
       });
 
-    expect(addedComment).toStrictEqual({
-      id: 'comment-123',
-      content: 'sebuah comment',
-      owner: 'user-123',
-    });
+    expect(addedComment).toBeInstanceOf(AddedComment);
+    expect(addedComment.id).toEqual('comment-123');
+    expect(addedComment.content).toEqual('sebuah comment');
+    expect(addedComment.owner).toEqual('user-123');
   });
 });
