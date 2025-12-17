@@ -58,4 +58,41 @@ describe('GetThreadDetailUseCase', () => {
     expect(result.comments[1].content)
       .toEqual('**komentar telah dihapus**');
   });
+
+  it('should handle Date object correctly', async () => {
+    const useCasePayload = {
+      threadId: 'thread-123',
+    };
+
+    const mockThreadRepository = new ThreadRepository();
+    mockThreadRepository.getThreadById = jest.fn(() => Promise.resolve({
+      id: 'thread-123',
+      title: 'sebuah thread',
+      body: 'sebuah body',
+      date: new Date('2021-08-08T07:19:09.775Z'),
+      username: 'dicoding',
+    }));
+
+    const mockCommentRepository = new CommentRepository();
+    mockCommentRepository.getCommentsByThreadId = jest.fn(() => Promise.resolve([
+      {
+        id: 'comment-123',
+        username: 'johndoe',
+        date: new Date('2021-08-08T07:22:33.555Z'),
+        content: 'sebuah comment',
+        is_delete: false,
+      },
+    ]));
+
+    const getThreadDetailUseCase = new GetThreadDetailUseCase({
+      threadRepository: mockThreadRepository,
+      commentRepository: mockCommentRepository,
+    });
+
+    const result = await getThreadDetailUseCase.execute(useCasePayload);
+
+    expect(result).toBeInstanceOf(DetailThread);
+    expect(result.date).toEqual('2021-08-08T07:19:09.775Z');
+    expect(result.comments[0].date).toEqual('2021-08-08T07:22:33.555Z');
+  });
 });
