@@ -4,3 +4,4 @@ config/database/test.json
 coverage
 .env
 todos/
+credential/
