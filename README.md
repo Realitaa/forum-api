@@ -1,12 +1,21 @@
-# Forum API Submission 1
+# Forum API Submission 2
 
-Saya Reza Mulia Putra (username: realitaa). Ini adalah submission 1 Forum API pada kelas Menjadi Back-End Developer Expert dengan Javascript. Seluruh unit test hijau, dan seluruh Test Postman mandatory hijau. 
+Saya Reza Mulia Putra (username: realitaa). Ini adalah submission 2 pada kelas Menjadi Back-End Developer Expert dengan Javascript. Seluruh unit test hijau, seluruh test Postman hijau, menerapkan CI/CD, limit access dan protokol HTTPS.
 
 ## Prerequisite
 
 Saya menggunakan starter project yang diberikan, sehingga spesifikasi minimal seperti versi minimal NodeJS dapat mengikuti dari Dicoding. 
 
 Selanjutnya Anda harus membuat tabel `forumapi` dan `forumapi_test` di database Postgres jika belum ada. Kemudian memberikan hak akses tabel tersebut kepada pengguna Postgres jika dibutuhkan.
+
+## CI/CD Implementation
+
+Dapat dilihat disini: https://github.com/Realitaa/forum-api/actions
+
+## HTTPS Protocol Implementation
+
+`shy-areas-check-politely.st.a.dcdg.xyz`
+`www.shy-areas-check-politely.st.a.dcdg.xyz`
 
 ## Installation
 
